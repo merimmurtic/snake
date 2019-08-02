@@ -1,6 +1,8 @@
 package com.mygame.mygame;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,18 +15,21 @@ public class GameOverActivity extends AppCompatActivity {
 
     private Button startGameAgain;
     private TextView displayScore;
-    private String score;
+    private TextView highScoreLabel;
+    private int score;
+    private  static   int highScore = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
 
-        score = getIntent().getExtras().get("score").toString();
+        score = (int) getIntent().getExtras().get("score");
 
         startGameAgain = findViewById(R.id.play_again_id);
 
         displayScore = findViewById(R.id.displayScore);
+        highScoreLabel = findViewById(R.id.bestScore);
 
         startGameAgain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,5 +40,18 @@ public class GameOverActivity extends AppCompatActivity {
         });
 
         displayScore.setText("Score: "+ score);
+
+        SharedPreferences settings = getSharedPreferences("GAME DATA", Context.MODE_PRIVATE);
+        highScore = settings.getInt("HIGH SCORE", highScore);
+
+        if(score > highScore){
+            highScore = score;
+            highScoreLabel.setText("High Score : "+ highScore);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putInt("High Score", highScore);
+            editor.commit();
+        } else {
+            highScoreLabel.setText("High Score: "+ highScore);
+        }
     }
 }
