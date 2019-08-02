@@ -30,6 +30,9 @@ public class FlyingSnakeView extends View {
     private int redX, redY, redSpeed = 25;
     private Paint redPaint = new Paint();
 
+    private int blackX, blackY, blackSpeed = 22;
+    private Paint blackPaint = new Paint();
+
     private boolean touch = false;
 
     private int score, lifeCounter;
@@ -57,6 +60,9 @@ public class FlyingSnakeView extends View {
 
         redPaint.setColor(Color.RED);
         redPaint.setAntiAlias(false);
+
+        blackPaint.setColor(Color.BLACK);
+        blackPaint.setAntiAlias(false);
 
 
         scorePaint.setColor(Color.WHITE);
@@ -129,6 +135,20 @@ public class FlyingSnakeView extends View {
             greenY = (int) Math.floor(Math.random() *(maxSnakeY - minSnakeY) + minSnakeY);
         }
         canvas.drawCircle(greenX, greenY, 25, greenPaint);
+
+        blackX = blackX - blackSpeed;
+
+        if(hitBallChecker(blackX, blackY)){
+
+            score = score - 10;
+            blackX = - 100;
+        }
+
+        if(blackX < 0){
+            blackX = canvasWidth + 21;
+            blackY = (int) Math.floor(Math.random() *(maxSnakeY - minSnakeY) + minSnakeY);
+        }
+        canvas.drawCircle(blackX, blackY, 25, blackPaint);
 
         redX = redX - redSpeed;
 
