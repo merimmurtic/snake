@@ -16,7 +16,7 @@ public class AdvertisementActivity extends AppCompatActivity {
 
                 try {
 
-                    sleep(3000);
+                    sleep(500);
 
                 } catch (Exception e) {
 
