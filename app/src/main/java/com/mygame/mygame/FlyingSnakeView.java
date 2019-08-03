@@ -47,7 +47,7 @@ public class FlyingSnakeView extends View {
         super(context);
 
         snake[0] = BitmapFactory.decodeResource(getResources(), R.drawable.snake);
-        snake[1] = BitmapFactory.decodeResource(getResources(), R.drawable.snake);
+        snake[1] = BitmapFactory.decodeResource(getResources(), R.drawable.snake2);
 
         backgroundImage = BitmapFactory.decodeResource(getResources(), R.drawable.background);
 
