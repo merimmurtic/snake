@@ -1,9 +1,14 @@
 package com.mygame.mygame;
 
+import android.graphics.Bitmap;
+
 public class LifeState {
 
     private int score;
     private int lifeCounter;
+    private Bitmap life[] = new Bitmap[2];
+    private Bitmap backgroundImage;
+
 
     public LifeState(int score, int lifeCounter) {
         this.score = score;
