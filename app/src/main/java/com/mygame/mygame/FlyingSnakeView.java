@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 public class FlyingSnakeView extends View {
 
@@ -157,7 +156,6 @@ public class FlyingSnakeView extends View {
             redX = - 100;
             lifeCounter --;
             if(lifeCounter == 0){
-                Toast.makeText(getContext(), "Game Over", Toast.LENGTH_SHORT).show();
 
                 Intent gameOverIntent = new Intent(getContext(), GameOverActivity.class);
                 gameOverIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
