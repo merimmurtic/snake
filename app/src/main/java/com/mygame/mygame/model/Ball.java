@@ -1,4 +1,4 @@
-package com.mygame.mygame;
+package com.mygame.mygame.model;
 
 public class Ball {
 

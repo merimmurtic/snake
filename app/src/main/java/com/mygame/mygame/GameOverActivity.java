@@ -42,13 +42,13 @@ public class GameOverActivity extends AppCompatActivity {
         displayScore.setText("Score: "+ score);
 
         SharedPreferences settings = getSharedPreferences("GAME DATA", Context.MODE_PRIVATE);
-        highScore = settings.getInt("HIGH SCORE", highScore);
+        highScore = settings.getInt("HIGH_SCORE", highScore);
 
         if(score > highScore){
             highScore = score;
             highScoreLabel.setText("High Score : "+ highScore);
             SharedPreferences.Editor editor = settings.edit();
-            editor.putInt("High Score", highScore);
+            editor.putInt("HIGH_SCORE", highScore);
             editor.commit();
         } else {
             highScoreLabel.setText("High Score: "+ highScore);

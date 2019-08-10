@@ -1,4 +1,4 @@
-package com.mygame.mygame;
+package com.mygame.mygame.views;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +11,12 @@ import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class FlyingSnakeView extends View {
+import com.mygame.mygame.GameOverActivity;
+import com.mygame.mygame.R;
+import com.mygame.mygame.model.Snake;
+import com.mygame.mygame.model.State;
 
-    private Bitmap snake[] = new Bitmap[2];
-    private int snakeX = 10;
-    private int snakeY;
-    private int snakeJump;
+public class FlyingSnakeView extends View {
 
     private int canvasWidth, canvasHeight;
 
@@ -34,21 +34,17 @@ public class FlyingSnakeView extends View {
 
     private boolean touch = false;
 
-    private int score, lifeCounter;
-
-    private Bitmap backgroundImage;
-
     private Paint scorePaint = new Paint();
 
-    private Bitmap life[] = new Bitmap[2];
+    private State state;
+
+    private Snake snake;
 
     public FlyingSnakeView(Context context) {
         super(context);
 
-        snake[0] = BitmapFactory.decodeResource(getResources(), R.drawable.snake);
-        snake[1] = BitmapFactory.decodeResource(getResources(), R.drawable.snake2);
-
-        backgroundImage = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        snake = new Snake(getResources());
+        state = new State(getResources());
 
         yellowPaint.setColor(Color.YELLOW);
         yellowPaint.setAntiAlias(false);
@@ -69,12 +65,7 @@ public class FlyingSnakeView extends View {
         scorePaint.setTypeface(Typeface.DEFAULT_BOLD);
         scorePaint.setAntiAlias(true);
 
-        life[0]= BitmapFactory.decodeResource(getResources(), R.drawable.hearts);
-        life[1]= BitmapFactory.decodeResource(getResources(), R.drawable.heart_grey);
-
-        snakeY = 550;
-        score = 0;
-        lifeCounter = 3;
+        snake.setSnakeY(550);
     }
 
     @Override
@@ -84,127 +75,85 @@ public class FlyingSnakeView extends View {
         canvasWidth = canvas.getWidth();
         canvasHeight = canvas.getHeight();
 
-        canvas.drawBitmap(backgroundImage, 0, 0, null);
+        state.drawBackground(canvas);
 
-        int minSnakeY = snake[0].getHeight();
-        int maxSnakeY = canvasHeight - snake[0].getHeight() * 3;
-        snakeY = snakeY + snakeJump;
+        snake.recalculate(canvasHeight);
+        snake.draw(canvas, touch);
 
-        if(snakeY < minSnakeY){
-            snakeY = minSnakeY;
-        }
-        if(snakeY > maxSnakeY){
-            snakeY = maxSnakeY;
-        }
-
-        snakeJump = snakeJump + 2;
-
-        if(touch){
-
-            canvas.drawBitmap(snake[1], snakeX, snakeY, null);
-            touch = false;
-        }else{
-            canvas.drawBitmap(snake[0], snakeX, snakeY, null);
-        }
+        touch = false;
 
         yellowX = yellowX - yellowSpeed;
 
-        if(hitBallChecker(yellowX, yellowY)){
-
-            score = score + 10;
+        if(snake.hitBallChecker(yellowX, yellowY)){
+            state.increaseScore(10);
             yellowX = - 100;
         }
 
         if(yellowX < 0){
             yellowX = canvasWidth + 21;
-            yellowY = (int) Math.floor(Math.random() *(maxSnakeY - minSnakeY) + minSnakeY);
+            yellowY = snake.generateBallYPosition();
         }
         canvas.drawCircle(yellowX, yellowY, 15, yellowPaint);
 
         greenX = greenX - greenSpeed;
 
-        if(hitBallChecker(greenX, greenY)){
-
-            score = score + 20;
+        if(snake.hitBallChecker(greenX, greenY)){
+            state.increaseScore(20);
             greenX = - 100;
         }
 
         if(greenX < 0){
             greenX = canvasWidth + 21;
-            greenY = (int) Math.floor(Math.random() *(maxSnakeY - minSnakeY) + minSnakeY);
+            greenY = snake.generateBallYPosition();
         }
         canvas.drawCircle(greenX, greenY, 25, greenPaint);
 
         blackX = blackX - blackSpeed;
 
-        if(hitBallChecker(blackX, blackY)){
-
-            score = score - 10;
+        if(snake.hitBallChecker(blackX, blackY)){
+            state.increaseScore(-10);
             blackX = - 100;
         }
 
         if(blackX < 0){
             blackX = canvasWidth + 21;
-            blackY = (int) Math.floor(Math.random() *(maxSnakeY - minSnakeY) + minSnakeY);
+            blackY = snake.generateBallYPosition();
         }
         canvas.drawCircle(blackX, blackY, 25, blackPaint);
 
         redX = redX - redSpeed;
 
-        if(hitBallChecker(redX, redY)){
+        if(snake.hitBallChecker(redX, redY)){
 
             redX = - 100;
-            lifeCounter --;
-            if(lifeCounter == 0){
-
+            state.decreaseLifes();
+            if(state.getLifeCounter() == 0){
                 Intent gameOverIntent = new Intent(getContext(), GameOverActivity.class);
                 gameOverIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                gameOverIntent.putExtra("score", score);
+                gameOverIntent.putExtra("score", state.getScore());
                 getContext().startActivity(gameOverIntent);
             }
         }
 
         if(redX < 0){
             redX = canvasWidth + 21;
-            redY = (int) Math.floor(Math.random() *(maxSnakeY - minSnakeY) + minSnakeY);
+            redY = snake.generateBallYPosition();
         }
         canvas.drawCircle(redX, redY, 30, redPaint);
 
-        canvas.drawText("Score: " + score, 20, 60, scorePaint);
+        canvas.drawText("Score: " + state.getScore(), 20, 60, scorePaint);
 
-        for(int i = 0; i < 3; i++){
-
-            int x = (int) (508 + life[0].getWidth() * 1.5 * i);
-            int y = 30;
-
-            if(i < lifeCounter){
-
-                canvas.drawBitmap(life[0], x, y, null);
-            }else{
-                canvas.drawBitmap(life[1], x, y, null);
-            }
-        }
-    }
-
-    public boolean hitBallChecker(int x, int y){
-        if(snakeX < x && x < (snakeX + snake[0].getWidth())
-                && snakeY < y && y < (snakeY + snake[0].getHeight()) ){
-            return true;
-        }
-
-        return false;
+        state.drawLifes(canvas);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             touch = true;
 
-            snakeJump = -22;
+            snake.jump();
 
-            if(score % 50 == 0){
-
+            if(state.getScore() % 50 == 0){
                  yellowSpeed += 1;
                  redSpeed += 1;
                  greenSpeed += 1;
