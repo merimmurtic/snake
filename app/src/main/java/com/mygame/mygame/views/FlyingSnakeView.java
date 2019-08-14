@@ -13,24 +13,25 @@ import android.view.View;
 
 import com.mygame.mygame.GameOverActivity;
 import com.mygame.mygame.R;
+import com.mygame.mygame.model.Ball;
 import com.mygame.mygame.model.Snake;
 import com.mygame.mygame.model.State;
+
+import java.lang.reflect.Array;
+
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.GREEN;
+import static android.graphics.Color.RED;
+import static android.graphics.Color.YELLOW;
 
 public class FlyingSnakeView extends View {
 
     private int canvasWidth, canvasHeight;
 
-    private int yellowX, yellowY, yellowSpeed = 16;
-    private Paint yellowPaint = new Paint();
-
-    private int greenX, greenY, greenSpeed = 20;
-    private Paint greenPaint = new Paint();
 
     private int redX, redY, redSpeed = 25;
     private Paint redPaint = new Paint();
 
-    private int blackX, blackY, blackSpeed = 22;
-    private Paint blackPaint = new Paint();
 
     private boolean touch = false;
 
@@ -40,24 +41,24 @@ public class FlyingSnakeView extends View {
 
     private Snake snake;
 
+    private Ball ball;
+
     public FlyingSnakeView(Context context) {
         super(context);
 
         snake = new Snake(getResources());
         state = new State(getResources());
+        ball = new Ball();
 
-        yellowPaint.setColor(Color.YELLOW);
-        yellowPaint.setAntiAlias(false);
+        ball.createBall(0, 0, 16, YELLOW);
+        ball.createBall(0, 0, 20, GREEN);
+        ball.createBall(0, 0, 22, BLACK);
 
 
-        greenPaint.setColor(Color.GREEN);
-        greenPaint.setAntiAlias(false);
 
         redPaint.setColor(Color.RED);
         redPaint.setAntiAlias(false);
 
-        blackPaint.setColor(Color.BLACK);
-        blackPaint.setAntiAlias(false);
 
 
         scorePaint.setColor(Color.WHITE);
@@ -82,44 +83,59 @@ public class FlyingSnakeView extends View {
 
         touch = false;
 
-        yellowX = yellowX - yellowSpeed;
-
-        if(snake.hitBallChecker(yellowX, yellowY)){
-            state.increaseScore(10);
-            yellowX = - 100;
+        if(ball.getBallColor().toString().equals("YELLOW")){
+            ball.setBallX(ball.getBallX() - ball.getBallSpeed());
         }
 
-        if(yellowX < 0){
-            yellowX = canvasWidth + 21;
-            yellowY = snake.generateBallYPosition();
-        }
-        canvas.drawCircle(yellowX, yellowY, 15, yellowPaint);
 
-        greenX = greenX - greenSpeed;
-
-        if(snake.hitBallChecker(greenX, greenY)){
-            state.increaseScore(20);
-            greenX = - 100;
+        if(ball.getBallColor().toString().equals("YELLOW")){
+            if (snake.hitBallChecker(ball.getBallX(), ball.getBallY())) {
+                state.increaseScore(10);
+                ball.setBallX(ball.getBallX() - 100);
+            }
         }
 
-        if(greenX < 0){
-            greenX = canvasWidth + 21;
-            greenY = snake.generateBallYPosition();
-        }
-        canvas.drawCircle(greenX, greenY, 25, greenPaint);
-
-        blackX = blackX - blackSpeed;
-
-        if(snake.hitBallChecker(blackX, blackY)){
-            state.increaseScore(-10);
-            blackX = - 100;
+        if(ball.getBallColor().toString().equals("YELLOW")){
+            if (ball.getBallX() < 0) {
+                ball.setBallX(canvasWidth + 21);
+                ball.setBallY(snake.generateBallYPosition());
+            }
+            canvas.drawCircle(ball.getBallX(), ball.getBallY(), 15, ball.getBallColor());
         }
 
-        if(blackX < 0){
-            blackX = canvasWidth + 21;
-            blackY = snake.generateBallYPosition();
+        if(ball.getBallColor().toString().equals("GREEN")) {
+            ball.setBallX(ball.getBallX() - ball.getBallSpeed());
         }
-        canvas.drawCircle(blackX, blackY, 25, blackPaint);
+
+        if(ball.getBallColor().toString().equals("GREEN")) {
+            if (snake.hitBallChecker(ball.getBallX(), ball.getBallY())) {
+                state.increaseScore(20);
+                ball.setBallX(ball.getBallX() - 100);
+            }
+        }
+
+        if(ball.getBallColor().toString().equals("GREEN")) {
+            if (ball.getBallX() < 0) {
+                ball.setBallX(canvasWidth + 21);
+                ball.setBallY(snake.generateBallYPosition());
+            }
+            canvas.drawCircle(ball.getBallX(), ball.getBallY(), 25, ball.getBallColor());
+        }
+
+        if(ball.getBallColor().toString().equals("BLACK")) {
+            ball.setBallX(ball.getBallX() - ball.getBallSpeed());
+
+            if (snake.hitBallChecker(ball.getBallX(), ball.getBallY())) {
+                state.increaseScore(-10);
+                ball.setBallX(ball.getBallX() - 100);
+            }
+
+            if (ball.getBallX() < 0) {
+                ball.setBallX(canvasWidth + 21);
+                ball.setBallY(snake.generateBallYPosition());
+            }
+            canvas.drawCircle(ball.getBallX(), ball.getBallY(), 25, ball.getBallColor());
+        }
 
         redX = redX - redSpeed;
 
@@ -154,9 +170,14 @@ public class FlyingSnakeView extends View {
             snake.jump();
 
             if(state.getScore() % 50 == 0){
-                 yellowSpeed += 1;
+                if(ball.getBallColor().equals(YELLOW)){
+                    ball.setBallSpeed(ball.getBallSpeed() + 1);
+                }
                  redSpeed += 1;
-                 greenSpeed += 1;
+                if(ball.getBallColor().equals(GREEN)){
+                    ball.setBallSpeed(ball.getBallSpeed() + 1);
+                }
+
             }
 
         }

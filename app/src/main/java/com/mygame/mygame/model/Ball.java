@@ -1,22 +1,25 @@
 package com.mygame.mygame.model;
 
+import android.graphics.Paint;
+
 public class Ball {
 
     private int ballX;
     private int ballY;
     private int ballSpeed;
-    private int ballColor;
-
-
-    public Ball(int ballX, int ballY, int ballSpeed, int ballColor) {
-        this.ballX = ballX;
-        this.ballY = ballY;
-        this.ballSpeed = ballSpeed;
-        this.ballColor = ballColor;
-    }
+    private Paint ballColor;
 
     public Ball(){
 
+    }
+
+
+
+    public void createBall(int ballX, int ballY, int ballSpeed, int ballColor){
+        ballX = ballX;
+        ballY = ballY;
+        ballSpeed = ballSpeed;
+        ballColor = ballColor;
     }
 
     public int getBallX() {
@@ -43,11 +46,11 @@ public class Ball {
         this.ballSpeed = ballSpeed;
     }
 
-    public int getBallColor() {
+    public Paint getBallColor() {
         return ballColor;
     }
 
-    public void setBallColor(int ballColor) {
+    public void setBallColor(Paint ballColor) {
         this.ballColor = ballColor;
     }
 }
