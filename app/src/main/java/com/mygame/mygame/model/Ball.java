@@ -1,5 +1,6 @@
 package com.mygame.mygame.model;
 
+import android.graphics.Canvas;
 import android.graphics.Paint;
 
 public class Ball {
@@ -7,19 +8,44 @@ public class Ball {
     private int ballX;
     private int ballY;
     private int ballSpeed;
-    private Paint ballColor;
+    private int ballColor;
 
-    public Ball(){
+    private int radius;
+    private int score;
 
+    private Paint paint = new Paint();
+
+    public Ball(int ballX, int ballY, int ballSpeed, int ballColor, int radius, int score){
+        this.ballX = ballX;
+        this.ballY = ballY;
+        this.ballSpeed = ballSpeed;
+        this.ballColor = ballColor;
+        this.radius = radius;
+        this.score = score;
+
+        paint.setColor(ballColor);
+        paint.setAntiAlias(false);
     }
 
+    public void updatePosition() {
+        this.ballX = ballX - ballSpeed;
+    }
 
+    public void increaseSpeed() {
+        ballSpeed += 1;
+    }
 
-    public void createBall(int ballX, int ballY, int ballSpeed, int ballColor){
-        ballX = ballX;
-        ballY = ballY;
-        ballSpeed = ballSpeed;
-        ballColor = ballColor;
+    public void draw(Canvas canvas, Snake snake) {
+        if(ballX < 0){
+            ballX = canvas.getWidth() + 21;
+            ballY = snake.generateBallYPosition();
+        }
+
+        canvas.drawCircle(ballX, ballY, radius, paint);
+    }
+
+    public void hit() {
+        ballX = -100;
     }
 
     public int getBallX() {
@@ -46,11 +72,19 @@ public class Ball {
         this.ballSpeed = ballSpeed;
     }
 
-    public Paint getBallColor() {
+    public int getBallColor() {
         return ballColor;
     }
 
-    public void setBallColor(Paint ballColor) {
+    public void setBallColor(int ballColor) {
         this.ballColor = ballColor;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

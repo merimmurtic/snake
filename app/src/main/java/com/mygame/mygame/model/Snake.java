@@ -45,9 +45,9 @@ public class Snake {
         }
     }
 
-    public boolean hitBallChecker(int x, int y){
-        if(snakeX < x && x < (snakeX + snake[0].getWidth())
-                && snakeY < y && y < (snakeY + snake[0].getHeight()) ){
+    public boolean hitBallChecker(Ball ball){
+        if(snakeX < ball.getBallX() && ball.getBallX() < (snakeX + snake[0].getWidth())
+                && snakeY < ball.getBallY() && ball.getBallY() < (snakeY + snake[0].getHeight()) ){
             return true;
         }
 
